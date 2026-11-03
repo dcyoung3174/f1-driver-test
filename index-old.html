@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#15151e">
+<title>赛道人格测试｜F1车手风格匹配</title>
+<style>
+:root{--bg:#15151e;--panel:#20202c;--panel2:#292936;--text:#f0f0f5;--muted:#a9a9b8;--red:#e10600;--line:#3b3b49;--green:#7ed6a5}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at top,#262633 0%,var(--bg) 52%);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding:24px 14px 44px}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid #ff7773;outline-offset:3px}
+.container{width:100%;max-width:680px;margin:0 auto}
+.hidden{display:none!important}
+.eyebrow{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:#ff7773;font-weight:800}
+.title{font-size:clamp(2rem,8vw,3.4rem);line-height:1.05;margin:12px 0 16px;font-weight:900;letter-spacing:-.04em}
+.title .accent{color:var(--red)}
+.lead{font-size:1.03rem;line-height:1.75;color:#d0d0da;max-width:540px;margin:0 auto 22px}
+.center{text-align:center}
+.panel{background:rgba(32,32,44,.92);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,4vw,28px);box-shadow:0 18px 50px #0002}
+.hero-mark{width:76px;height:76px;border:2px solid var(--red);border-radius:18px;margin:0 auto 20px;display:grid;place-items:center;font-size:1.7rem;font-weight:950;transform:skew(-5deg);box-shadow:5px 5px 0 #e1060030}
+.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0}
+.stat{border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:#d5d5df;font-size:.85rem}
+.btn{border:0;border-radius:10px;padding:14px 20px;font-weight:800;transition:transform .15s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn-red{background:var(--red);color:white}
+.btn-red:hover{background:#c90000}
+.btn-ghost{background:transparent;border:1px solid #777787;color:var(--text)}
+.btn-muted{background:var(--panel2);color:var(--text)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.full{width:100%}
+.note{font-size:.78rem;color:var(--muted);line-height:1.6}
+.top-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.counter{font-weight:800;color:#ff7773}
+.progress-track{height:7px;background:#3b3b49;border-radius:99px;overflow:hidden;margin:0 0 28px}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#a80000,var(--red),#ff6661);transition:width .25s}
+.q-tag{font-size:.75rem;color:#ff7773;font-weight:800;letter-spacing:.08em;margin-bottom:10px}
+.question{font-size:clamp(1.2rem,4.7vw,1.55rem);line-height:1.55;margin:0 0 22px}
+.options{display:grid;gap:11px}
+.option{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;background:var(--panel2);border:1px solid transparent;color:var(--text);padding:15px;border-radius:12px;line-height:1.55;transition:border .15s,background .15s}
+.option:hover{border-color:#696979;background:#30303e}
+.option.selected{border-color:var(--red);background:#421f25}
+.option-letter{display:grid;place-items:center;flex:0 0 28px;height:28px;border:1px solid #6a6a7a;border-radius:8px;font-size:.8rem;font-weight:900;color:#d8d8e2}
+.option.selected .option-letter{background:var(--red);border-color:var(--red);color:white}
+.nav-row{display:flex;gap:10px;margin-top:22px}
+.nav-row .btn{flex:1}
+.section-title{font-size:1.35rem;margin:0 0 8px}
+.muted{color:var(--muted)}
+.result-kicker{font-size:.8rem;letter-spacing:.16em;font-weight:900;color:#ff7773}
+.result-name{font-size:clamp(2.3rem,9vw,3.6rem);line-height:1.1;font-weight:950;margin:8px 0}
+.result-sub{color:#d3d3dd;line-height:1.65;margin:0 auto 18px;max-width:520px}
+.result-card{position:relative;overflow:hidden;background:linear-gradient(145deg,#292936,#171720 65%);border:1px solid #555563;border-radius:20px;padding:24px;text-align:left;margin:20px 0}
+.result-card:after{content:"";position:absolute;right:-35px;top:-40px;width:160px;height:160px;border:22px solid #e106001b;border-radius:50%;pointer-events:none}
+.card-brand{font-size:.72rem;letter-spacing:.18em;color:#ff7773;font-weight:900}
+.card-name{font-size:2.1rem;font-weight:950;margin:8px 0 2px}
+.card-sub{color:#c8c8d2;font-size:.9rem}
+.match-wrap{display:flex;align-items:center;gap:16px;margin:20px 0}
+.match-ring{width:84px;height:84px;flex:0 0 84px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--red) var(--match,70%),#454552 0);position:relative}
+.match-ring:before{content:"";position:absolute;inset:7px;background:#1d1d27;border-radius:50%}
+.match-ring strong{position:relative;font-size:1.25rem}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.tag{background:#3a252b;color:#ffd1cf;border:1px solid #703139;border-radius:999px;padding:7px 10px;font-size:.8rem}
+.analysis-grid{display:grid;gap:14px;margin-top:18px}
+.dimension{display:grid;grid-template-columns:92px 1fr 36px;align-items:center;gap:10px;font-size:.82rem}
+.dim-track{height:8px;background:#41414f;border-radius:99px;overflow:hidden}
+.dim-fill{height:100%;background:linear-gradient(90deg,#9c0000,var(--red));border-radius:99px}
+.dim-score{text-align:right;color:#e4e4ec;font-variant-numeric:tabular-nums}
+.result-block{margin-top:20px}
+.result-block h3{font-size:1rem;margin:0 0 8px}
+.result-block p{margin:0;color:#d2d2dc;line-height:1.75}
+.runnerup{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.runnerup:last-child{border-bottom:0}
+.runnerup strong{display:block}
+.runnerup small{color:var(--muted)}
+.footer-note{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.76rem;line-height:1.65}
+.button-group{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.button-group .btn{flex:1;min-width:130px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#f0f0f5;color:#15151e;padding:10px 16px;border-radius:999px;font-weight:800;font-size:.85rem;box-shadow:0 8px 30px #0005;z-index:10}
+@media(min-width:600px){.analysis-grid{grid-template-columns:1fr 1fr}}
+@media print{body{background:#15151e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.no-print{display:none!important}.container{max-width:700px}.panel{box-shadow:none}}
+</style>
+</head>
+<body>
+<main class="container">
+  <section id="start-page" class="panel center">
+    <div class="hero-mark">F1</div>
+    <div class="eyebrow">RACE STYLE · PERSONALITY QUIZ</div>
+    <h1 class="title">测测你的<br><span class="accent">赛道人格</span></h1>
+    <p class="lead">15 道赛场情境题，从进攻、防守到策略与团队协作，找到与你比赛风格最接近的 F1 车手。</p>
+    <div class="stats">
+      <span class="stat">15 道情境题</span>
+      <span class="stat">约 3 分钟</span>
+      <span class="stat">6 个性格维度</span>
+    </div>
+    <button class="btn btn-red full" id="start-btn">开始测试 →</button>
+    <p class="note" style="margin:18px 0 0">本测试为娱乐用途，根据自设评分模型生成结果，不代表官方评价或心理测量。</p>
+  </section>
+
+  <section id="quiz-page" class="panel hidden">
+    <div class="top-row">
+      <span class="counter" id="counter">第 1 / 15 题</span>
+      <button class="btn btn-ghost" id="quit-btn" style="padding:8px 12px;font-size:.85rem">退出测试</button>
+    </div>
+    <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="q-tag" id="q-tag">RACE SCENARIO 01</div>
+    <h2 class="question" id="question-text"></h2>
+    <div class="options" id="options"></div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" id="prev-btn">← 上一题</button>
+      <button class="btn btn-red" id="next-btn" disabled>下一题 →</button>
+    </div>
+    <p class="note" style="margin:14px 0 0">选择最符合你直觉的答案，没有标准答案。你的作答只在当前浏览器页面中临时计算。</p>
+  </section>
+
+  <section id="result-page" class="panel hidden">
+    <div class="center">
+      <div class="eyebrow">YOUR RACE STYLE</div>
+      <h2 class="section-title" style="margin-top:8px">你的匹配结果</h2>
+      <p class="muted" style="margin:0">根据你的赛场选择生成的风格画像</p>
+    </div>
+    <div class="result-card" id="share-card">
+      <div class="card-brand">RACE STYLE PROFILE · PERSONAL EDITION</div>
+      <div class="card-name" id="card-driver-name">维斯塔潘</div>
+      <div class="card-sub" id="card-driver-tagline">冷静执行 · 竞争导向</div>
+      <div class="match-wrap">
+        <div class="match-ring" id="match-ring"><strong id="match-score">82%</strong></div>
+        <div>
+          <div class="result-kicker">STYLE SIMILARITY</div>
+          <div style="font-size:1.05rem;font-weight:800;margin:5px 0">风格相似度</div>
+          <div class="note">模型计算值，仅用于本测试内的相对比较</div>
+        </div>
+      </div>
+      <div class="tags" id="result-tags"></div>
+      <div class="note">独立娱乐测试 · 非官方关联产品</div>
+    </div>
+    <p class="result-sub" id="result-summary"></p>
+    <div class="result-block">
+      <h3>你的六维赛道画像</h3>
+      <div class="analysis-grid" id="dimension-chart"></div>
+    </div>
+    <div class="result-block">
+      <h3>你的比赛优势</h3>
+      <p id="strength-text"></p>
+    </div>
+    <div class="result-block">
+      <h3>可以留意的盲点</h3>
+      <p id="blindspot-text"></p>
+    </div>
+    <div class="result-block">
+      <h3>其他接近的车手风格</h3>
+      <div id="runnerups"></div>
+    </div>
+    <div class="button-group no-print">
+      <button class="btn btn-muted" id="save-btn">保存结果卡</button>
+      <button class="btn btn-ghost" id="copy-btn">复制文字结果</button>
+      <button class="btn btn-red" id="restart-btn">重新测试</button>
+    </div>
+    <div class="footer-note">说明：本测试是粉丝向娱乐内容。车手画像为创作者根据公开赛场风格设定的参考模型，并非车手本人心理测评结果；相似度不代表科学概率、真实能力或赛绩预测。车手姓名仅用于描述性讨论，不表示获得赛事、车队或车手授权。</div>
+  </section>
+</main>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+// 六个维度顺序：进攻、风险、策略、稳定、适应、团队
+const DIMENSIONS = [
+  {name:"进攻倾向", low:"更重视守位", high:"主动寻找进攻机会"},
+  {name:"风险偏好", low:"优先控制风险", high:"愿意承担更高风险"},
+  {name:"策略思维", low:"更依赖即时反应", high:"倾向提前规划"},
+  {name:"稳定性", low:"愿意为上限冒险", high:"重视持续稳定发挥"},
+  {name:"临场适应", low:"偏好熟悉节奏", high:"擅长快速调整"},
+  {name:"团队协作", low:"倾向自主决策", high:"重视沟通与协同"}
+];
+
+// 每个选项包含六个维度的 -2 至 +2 分数。
+// 题目为娱乐性情境设计，不是经过临床或学术验证的心理量表。
+const QUESTIONS = [
+ {q:"正赛发车，你身前出现一个超车空隙，你会？",o:[
+  {t:"守住线路，优先避免碰撞",s:[-1,-2,1,2,0,0]},
+  {t:"果断切入，争取更好的位置",s:[2,2,0,-1,1,0]},
+  {t:"先观察对手走线，再判断时机",s:[1,0,2,1,2,0]},
+  {t:"不急于冒险，先稳定比赛节奏",s:[-1,-2,1,2,0,0]},
+  {t:"结合车队信息再决定",s:[0,-1,2,1,0,2]}]},
+ {q:"后车持续在 DRS 区间内追击，你会？",o:[
+  {t:"稳定走线，尽量不给超车窗口",s:[0,-1,1,2,0,0]},
+  {t:"积极防守，打乱对手节奏",s:[2,2,1,-1,1,0]},
+  {t:"管理轮胎，准备在后段反击",s:[0,-1,2,2,1,0]},
+  {t:"容易被追击影响，开始频繁调整",s:[0,1,-1,-2,0,0]},
+  {t:"分析对手节奏，选择最有效的防守点",s:[1,0,2,1,2,0]}]},
+ {q:"车队策略和你对赛车状态的体感不一致，你会？",o:[
+  {t:"先执行数据建议，再持续反馈",s:[0,-1,2,2,0,2]},
+  {t:"清楚说明自己的判断，和工程师讨论",s:[1,0,2,1,1,2]},
+  {t:"找一个折中方案，边跑边验证",s:[0,-1,2,1,2,2]},
+  {t:"犹豫不决，担心做错选择",s:[-1,-1,-1,-2,-1,0]},
+  {t:"先试一圈，拿到更多数据再判断",s:[0,0,2,1,2,2]}]},
+ {q:"排位赛最后一圈，轮胎状态一般，你会？",o:[
+  {t:"保证有效圈，避免把成绩跑掉",s:[-1,-2,1,2,0,0]},
+  {t:"全力 push，争取榨出最后一点速度",s:[2,2,0,-1,1,0]},
+  {t:"根据计时差和赛道情况决定力度",s:[1,0,2,1,2,0]},
+  {t:"压力上来后不太敢接近极限",s:[-1,-1,-1,-1,-1,0]},
+  {t:"逐步建立节奏，在关键弯道发力",s:[1,0,2,1,2,0]}]},
+ {q:"赛车出现轻微异常震动，你第一反应是？",o:[
+  {t:"判断严重程度，控制节奏并保持冷静",s:[0,-1,2,2,2,0]},
+  {t:"尽量维持速度，同时调整驾驶方式",s:[1,1,0,0,2,0]},
+  {t:"尽快把症状和发生条件反馈给车队",s:[0,-1,2,1,1,2]},
+  {t:"担心赛车出问题，容易分心",s:[-1,-1,-1,-2,-1,0]},
+  {t:"先安全完成当前阶段，再完整汇报",s:[-1,-1,2,2,1,2]}]},
+ {q:"和同队队友争夺名次，你更倾向？",o:[
+  {t:"公平竞争，给彼此留出合理空间",s:[1,0,1,2,0,2]},
+  {t:"全力进攻，不因为对方是队友就退让",s:[2,2,0,-1,1,-1]},
+  {t:"保持可控距离，避免双车事故",s:[-1,-2,2,2,0,2]},
+  {t:"不想内耗，尽量错开节奏",s:[-1,-1,1,1,0,2]},
+  {t:"先确认车队规则和当前比赛目标",s:[0,-1,2,2,0,2]}]},
+ {q:"连续多圈轮胎衰减明显，你会？",o:[
+  {t:"控制节奏，争取撑到理想进站窗口",s:[-1,-1,2,2,1,0]},
+  {t:"尽可能保持圈速，之后再处理",s:[2,1,-1,-1,0,0]},
+  {t:"主动和车队讨论提前进站的收益",s:[0,-1,2,1,1,2]},
+  {t:"因为圈速下降而急躁，容易过度驾驶",s:[1,2,-1,-2,0,0]},
+  {t:"适度降低负荷，先保住赛车状态",s:[-1,-2,2,2,1,0]}]},
+ {q:"赛道上有慢车挡住你的节奏，你会？",o:[
+  {t:"找干净线路，耐心等待安全机会",s:[0,-1,2,2,1,0]},
+  {t:"抓住窗口，尽快完成超越",s:[2,2,0,-1,2,0]},
+  {t:"先跟车观察，避免不必要的风险",s:[-1,-2,1,2,1,0]},
+  {t:"被打乱节奏后，需要时间重新稳定",s:[0,0,-1,-1,-1,0]},
+  {t:"观察对方路线和轮胎状态再行动",s:[1,0,2,1,2,0]}]},
+ {q:"比赛最后几圈，燃油余量紧张，你会？",o:[
+  {t:"严格执行节油节奏，守住完赛目标",s:[-1,-2,2,2,1,2]},
+  {t:"尽量保持速度，能争取就争取",s:[2,2,-1,-1,0,0]},
+  {t:"和工程师确认余量与可用模式",s:[0,-1,2,1,1,2]},
+  {t:"过度关注余量，影响驾驶专注度",s:[-1,-1,-1,-2,-1,0]},
+  {t:"小幅调整油门与换挡，兼顾速度和余量",s:[0,-1,2,2,2,0]}]},
+ {q:"拿到分站冠军冲线的一刻，你最可能？",o:[
+  {t:"迅速回到专注状态，准备赛后复盘",s:[0,-1,2,2,0,1]},
+  {t:"尽情释放情绪，享受胜利",s:[1,1,0,0,0,0]},
+  {t:"第一时间感谢工程师和整个团队",s:[0,0,1,1,0,2]},
+  {t:"安静享受成就，不需要太多表达",s:[-1,-1,1,1,0,0]},
+  {t:"和工程师简短庆祝，随后复盘数据",s:[0,-1,2,2,0,2]}]},
+ {q:"连续几场比赛成绩不理想，你会？",o:[
+  {t:"仔细复盘数据，逐项改进",s:[0,-1,2,2,1,1]},
+  {t:"越挫越勇，下场继续全力冲击",s:[2,2,0,0,1,0]},
+  {t:"开始怀疑自己，需要重新建立信心",s:[-1,-1,-1,-2,-1,0]},
+  {t:"尝试新的驾驶思路和设置方向",s:[1,1,1,0,2,1]},
+  {t:"把注意力放回驾驶过程，不被结果牵着走",s:[0,-1,1,2,1,0]}]},
+ {q:"雨天湿地比赛，你更倾向？",o:[
+  {t:"稳扎稳打，优先保证容错空间",s:[-1,-2,1,2,1,0]},
+  {t:"大胆寻找抓地力差异，抓住超车机会",s:[2,2,0,-1,2,0]},
+  {t:"观察其他车手的线路和制动点",s:[1,0,2,1,2,0]},
+  {t:"降低速度，尽可能避免失误",s:[-1,-2,0,2,-1,0]},
+  {t:"逐步试探抓地力，快速建立新节奏",s:[1,0,1,1,2,0]}]},
+ {q:"安全车结束，即将重新发车，你会？",o:[
+  {t:"精准控制节奏，提前准备防守线路",s:[0,-1,2,2,1,0]},
+  {t:"积极抢占位置，利用重启制造机会",s:[2,2,0,-1,2,0]},
+  {t:"留好安全距离，避免连锁事故",s:[-1,-2,1,2,1,0]},
+  {t:"跟随前车节奏，减少不确定因素",s:[-1,-1,1,2,0,0]},
+  {t:"根据对手习惯和轮胎温度灵活调整",s:[1,0,2,1,2,0]}]},
+ {q:"赛后采访中，你更习惯怎样表达？",o:[
+  {t:"简洁克制，只谈关键事实",s:[0,-1,2,2,0,0]},
+  {t:"轻松风趣，让气氛活跃起来",s:[0,0,0,0,1,1]},
+  {t:"直白真诚，清楚表达自己的想法",s:[1,0,0,0,1,0]},
+  {t:"不太喜欢公开表达，更愿意专注工作",s:[-1,-1,1,1,0,0]},
+  {t:"措辞周全，也会考虑团队和合作伙伴",s:[0,-1,2,1,0,2]}]},
+ {q:"休赛期，你最愿意把时间花在哪里？",o:[
+  {t:"体能训练，维持竞技状态",s:[0,-1,1,2,0,0]},
+  {t:"好好休息，恢复身心状态",s:[-1,-1,0,1,0,0]},
+  {t:"研究赛车技术、数据和驾驶细节",s:[0,-1,2,2,1,0]},
+  {t:"和朋友相聚，享受生活",s:[0,0,0,0,1,2]},
+  {t:"短途出行换换环境，再重新投入训练",s:[0,0,1,1,2,1]}]}
+];
+
+// 车手画像：进攻、风险、策略、稳定、适应、团队，范围 0-100。
+// 这是为了演示匹配算法而建立的创作者参考设定，并非车手本人心理数据。
+const DRIVERS = [
+ {name:"维斯塔潘",tagline:"竞争导向 · 冷静执行",p:[88,70,88,92,91,75],desc:"你的选择体现出强烈的竞争目标与执行意识。你倾向于把注意力放在速度、判断和完成任务上，压力下也希望尽快找到有效解法。",strength:"目标明确，愿意为结果持续优化执行方式；当局面复杂时，仍倾向于寻找可操作的解决方案。",blind:"当目标过于明确时，可能低估保守方案的价值。关键时刻给自己留出重新评估风险的空间。"},
+ {name:"勒克莱尔",tagline:"速度追求 · 主动进攻",p:[92,82,75,72,86,75],desc:"你的选择更偏向主动争取机会，同时对驾驶表现有较高期待。你愿意靠近极限，但也需要找到进攻与稳定之间的平衡。",strength:"敢于争取机会，对速度和表现有热情；局势变化时通常愿意主动寻找解法。",blind:"强烈的结果期待有时会放大失误带来的压力。把注意力放回每一步可执行的动作，能帮助你保持节奏。"},
+ {name:"佩雷兹",tagline:"轮胎管理 · 策略防守",p:[68,53,88,88,82,88],desc:"你的答案显示出对节奏、资源管理和比赛局势的重视。你更愿意在适当时机出手，而不是持续消耗资源。",strength:"善于权衡即时收益与长期节奏，愿意考虑团队信息和整体比赛目标。",blind:"如果过度等待理想窗口，可能错过少数需要果断行动的机会。"},
+ {name:"汉密尔顿",tagline:"经验判断 · 团队协同",p:[80,68,88,88,94,92],desc:"你倾向于把经验、临场调整与团队沟通结合起来，不只关注眼前的一圈，也会考虑更大的比赛背景。",strength:"兼顾整体目标和即时判断，面对变化时愿意调整策略并与团队协作。",blind:"同时考虑太多因素时，决策可能变得复杂。可以提前明确最重要的判断标准。"},
+ {name:"拉塞尔",tagline:"自律规划 · 稳定执行",p:[75,57,92,91,82,86],desc:"你的选择偏向结构化判断，重视准备、数据与执行一致性。你希望尽可能减少不必要的不确定性。",strength:"做事有规划，愿意复盘并按步骤解决问题，适合持续积累稳定表现。",blind:"计划性很强时，可能不太愿意临时改变方案。给突发情况预留调整空间会更灵活。"},
+ {name:"诺里斯",tagline:"灵活反应 · 轻松应变",p:[82,70,76,82,92,84],desc:"你的答案显示出一定的灵活性，倾向于根据环境变化调整做法，同时保留轻松和开放的心态。",strength:"适应变化的意愿较强，能够在不同情境中尝试不同策略。",blind:"如果太依赖临场感觉，长期一致性可能受到影响。复盘能帮助你把灵感沉淀为方法。"},
+ {name:"皮亚斯特里",tagline:"冷静克制 · 稳步推进",p:[77,58,86,93,84,80],desc:"你偏向先观察、再执行，重视稳定性和判断质量，不一定需要用激进动作证明自己。",strength:"冷静、克制，愿意稳步积累；面对压力时可以优先处理眼前任务。",blind:"过于克制可能让你错过需要主动争取的窗口。"},
+ {name:"阿隆索",tagline:"战术博弈 · 临场调整",p:[84,72,96,87,96,80],desc:"你的选择体现出强烈的局势意识，喜欢观察对手、推演可能性，并在条件变化时快速调整。",strength:"善于把不同信息放在一起考虑，在复杂情境中寻找替代方案。",blind:"复杂分析有时会占用行动时间。确定关键变量后，及时做出足够好的决策。"},
+ {name:"奥康",tagline:"理性判断 · 风险控制",p:[69,50,84,84,80,78],desc:"你更看重判断的合理性和风险边界，倾向于选择可控、可解释的行动路线。",strength:"面对压力时愿意先评估条件，不容易只为了短期刺激而改变方向。",blind:"风险控制过强时，可能需要更主动地识别值得争取的机会。"},
+ {name:"加斯利",tagline:"情绪驱动 · 爆发进攻",p:[85,82,76,74,88,82],desc:"你的答案更有冲劲，愿意在机会出现时主动出手，也会受到比赛氛围和目标感的推动。",strength:"有行动力，愿意迎接挑战；状态和目标清晰时容易快速投入。",blind:"情绪和节奏可能互相影响。建立稳定的赛前流程有助于把冲劲转化为持续表现。"},
+ {name:"塞恩斯",tagline:"均衡驾驶 · 理性权衡",p:[78,61,90,89,86,86],desc:"你的选择倾向于在进攻、策略和稳定之间寻找平衡，愿意权衡多个选项的成本。",strength:"综合考虑问题，不容易只盯住单一指标；适合用系统方式改善表现。",blind:"过于追求平衡时，有时需要更快地决定当前最优先的目标。"},
+ {name:"里卡多",tagline:"乐观开放 · 灵活沟通",p:[79,70,75,80,86,90],desc:"你的选择更偏向开放、乐观与沟通，既在意比赛本身，也重视团队气氛和互动。",strength:"善于保持开放心态，能够借助沟通和积极状态适应不同情境。",blind:"保持轻松很有价值，但重要时刻仍需要明确的执行计划。"},
+ {name:"霍肯伯格",tagline:"稳健务实 · 经验执行",p:[73,55,86,88,82,79],desc:"你倾向于务实处理问题，重视经验、稳定和对赛车状态的判断，不会轻易追逐不必要的风险。",strength:"注重执行和现实条件，能够把注意力放在真正影响结果的因素上。",blind:"过于务实可能压低尝试新方法的意愿。"},
+ {name:"阿尔本",tagline:"温和坚韧 · 适应环境",p:[74,57,82,87,91,88],desc:"你的答案体现出温和但有韧性的风格，倾向于根据环境调整策略，并尽可能发挥现有条件的价值。",strength:"愿意适应限制条件，重视沟通，也能通过持续调整寻找可行方案。",blind:"太照顾整体环境时，别忘了清楚表达自己的需求和判断。"},
+ {name:"斯特罗尔",tagline:"直接行动 · 专注节奏",p:[81,78,72,75,78,68],desc:"你更愿意直接面对挑战，按自己的节奏行动，不太希望在关键时刻被过多外部声音干扰。",strength:"行动直接，愿意承担选择带来的责任，目标明确时执行迅速。",blind:"独立行动有时会错过有价值的信息，关键节点仍值得听取反馈。"},
+ {name:"博塔斯",tagline:"稳定可靠 · 执行协同",p:[71,52,83,91,80,90],desc:"你的选择偏向稳定执行和团队协作，愿意把复杂任务拆成可持续完成的步骤。",strength:"可靠、重视流程和协同，能帮助团队维持稳定的工作节奏。",blind:"太强调稳定可能减少主动争取机会的次数。"},
+ {name:"马格努森",tagline:"强硬防守 · 果断对抗",p:[88,88,70,69,78,66],desc:"你的答案更有对抗性和直接性，遇到竞争时倾向于明确表达立场并积极争取位置。",strength:"态度坚决，遇到挑战时不容易轻易退缩，行动风格清晰。",blind:"强硬不等于有效。判断边界和代价，能让进攻更有针对性。"},
+ {name:"周冠宇",tagline:"细致沉淀 · 稳步成长",p:[70,54,83,86,84,85],desc:"你的选择偏向细致、沉稳和持续积累，愿意通过学习和调整逐步改善表现。",strength:"注重过程、愿意学习，也能在长期目标下保持耐心。",blind:"稳步推进之外，也可以更主动地争取展示能力的机会。"},
+ {name:"萨金特",tagline:"开放学习 · 勇于尝试",p:[77,72,72,70,84,76],desc:"你的选择体现出开放和尝试意愿，愿意从不同情境中积累经验，逐渐建立自己的方法。",strength:"接受新信息，愿意试错和学习，适合在反馈中持续成长。",blind:"尝试很多方向时，需要复盘哪些方法真正有效。"},
+ {name:"德弗里斯",tagline:"快速理解 · 灵活适应",p:[73,61,84,81,92,82],desc:"你的答案偏向快速理解新信息、调整做法，并在不确定环境中寻找可执行的路线。",strength:"学习和适应意愿较强，能够根据反馈改变策略。",blind:"适应变化时也要建立稳定基线，避免频繁切换方法。"}
+];
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+const $ = id => document.getElementById(id);
+const startPage = $("start-page"), quizPage = $("quiz-page"), resultPage = $("result-page");
+
+function showToast(msg){
+  const el=$("toast"); el.textContent=msg; el.classList.remove("hidden");
+  clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>el.classList.add("hidden"),2200);
+}
+function showPage(page){
+  [startPage,quizPage,resultPage].forEach(p=>p.classList.add("hidden"));
+  page.classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function startTest(){
+  current=0; answers=new Array(QUESTIONS.length).fill(null);
+  renderQuestion(); showPage(quizPage);
+}
+function renderQuestion(){
+  const item=QUESTIONS[current];
+  $("counter").textContent=`第 ${current+1} / ${QUESTIONS.length} 题`;
+  $("q-tag").textContent=`RACE SCENARIO ${String(current+1).padStart(2,"0")}`;
+  $("question-text").textContent=item.q;
+  $("progress-bar").style.width=`${(current+1)/QUESTIONS.length*100}%`;
+  $("options").innerHTML="";
+  item.o.forEach((option,index)=>{
+    const btn=document.createElement("button");
+    btn.type="button";
+    btn.className="option"+(answers[current]===index?" selected":"");
+    btn.setAttribute("aria-pressed",answers[current]===index?"true":"false");
+    const letter=document.createElement("span");letter.className="option-letter";letter.textContent=String.fromCharCode(65+index);
+    const text=document.createElement("span");text.textContent=option.t;
+    btn.append(letter,text);
+    btn.addEventListener("click",()=>{
+      answers[current]=index;
+      [...$("options").children].forEach((el,i)=>{
+        el.classList.toggle("selected",i===index);
+        el.setAttribute("aria-pressed",i===index?"true":"false");
+      });
+      $("next-btn").disabled=false;
+      $("next-btn").textContent=current===QUESTIONS.length-1?"查看测试结果 →":"下一题 →";
+    });
+    $("options").appendChild(btn);
+  });
+  $("prev-btn").disabled=current===0;
+  $("next-btn").disabled=answers[current]===null;
+  $("next-btn").textContent=current===QUESTIONS.length-1?"查看测试结果 →":"下一题 →";
+}
+function nextQuestion(){
+  if(answers[current]===null){showToast("请先选择一个答案");return;}
+  if(current<QUESTIONS.length-1){current++;renderQuestion();window.scrollTo({top:0,behavior:"smooth"});}
+  else showResult();
+}
+function previousQuestion(){
+  if(current>0){current--;renderQuestion();}
+}
+function getUserProfile(){
+  const sums=Array(6).fill(0),counts=Array(6).fill(0);
+  answers.forEach((answerIndex,questionIndex)=>{
+    const scores=QUESTIONS[questionIndex].o[answerIndex].s;
+    scores.forEach((value,j)=>{sums[j]+=value;counts[j]++;});
+  });
+  // 将选项平均分（-2 至 +2）映射到 0 至 100。
+  return sums.map((sum,j)=>Math.round(((sum/counts[j])+2)/4*100));
+}
+function similarity(user,driver){
+  const meanDiff=user.reduce((sum,value,j)=>sum+Math.abs(value-driver.p[j]),0)/user.length;
+  return Math.round(Math.max(0,100-meanDiff));
+}
+function getTags(profile){
+  const order=profile.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v);
+  const high=order.slice(0,3).map(x=>DIMENSIONS[x.i].name);
+  const low=order.slice(-1)[0];
+  return {high,low:DIMENSIONS[low.i].name,lowScore:low.v};
+}
+function getStrength(profile){
+  const sorted=profile.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v);
+  const top=sorted.slice(0,2).map(x=>DIMENSIONS[x.i].name);
+  const lines={
+    "进攻倾向":"你更愿意主动寻找机会，不太满足于被动等待。遇到目标明确的情境时，通常会考虑怎样争取主动权。",
+    "风险偏好":"你对不确定性有一定容忍度，愿意在机会与风险之间做取舍。做决定前明确可承受的代价，会让这种勇气更有效。",
+    "策略思维":"你倾向于先收集线索、比较选项，再决定行动。复杂情境下，提前想好几个备选方案可能是你的优势。",
+    "稳定性":"你重视节奏和持续执行，不只看单次表现。把注意力放在可重复的动作上，通常更容易维持稳定。",
+    "临场适应":"你愿意根据新信息改变做法。环境发生变化时，调整路线而不是固守原计划，可能更符合你的风格。",
+    "团队协作":"你会考虑沟通、分工和共同目标。把自己的判断说清楚，也愿意听取反馈，是你可以发挥的优势。"
+  };
+  return `你较突出的维度是「${top.join("、")}」。${lines[top[0]]}`;
+}
+function getBlindspot(profile){
+  const sorted=profile.map((v,i)=>({v,i})).sort((a,b)=>a.v-b.v);
+  const bottom=sorted[0],name=DIMENSIONS[bottom.i].name;
+  const lines={
+    "进攻倾向":"你可能更愿意守住现状，面对窗口期时可以提醒自己：不行动同样是一种选择，也有机会成本。",
+    "风险偏好":"你可能优先寻找可控方案。遇到低成本、可逆的尝试时，可以考虑给自己更多实验空间。",
+    "策略思维":"你可能更依赖即时反应。赛前先设定目标和判断条件，能减少临场信息过载。",
+    "稳定性":"你可能更看重突破和变化。建立简单的检查清单，有助于减少不必要的波动。",
+    "临场适应":"你可能更偏好熟悉的流程。提前模拟几种突发情况，可以降低变化带来的压力。",
+    "团队协作":"你可能更习惯独立处理问题。关键节点主动交换信息，有时能减少重复劳动和误判。"
+  };
+  return `相对而言，「${name}」是你本次得分较低的维度。${lines[name]}`;
+}
+function showResult(){
+  const profile=getUserProfile();
+  const ranked=DRIVERS.map(d=>({...d,match:similarity(profile,d)})).sort((a,b)=>b.match-a.match);
+  const best=ranked[0],second=ranked[1],third=ranked[2];
+  const tags=getTags(profile);
+  $("card-driver-name").textContent=best.name;
+  $("card-driver-tagline").textContent=best.tagline;
+  $("match-score").textContent=`${best.match}%`;
+  $("match-ring").style.setProperty("--match",`${best.match}%`);
+  $("result-tags").innerHTML="";
+  tags.high.forEach(tag=>{const el=document.createElement("span");el.className="tag";el.textContent=tag;$("result-tags").appendChild(el);});
+  $("result-summary").textContent=`你的选择与「${best.name}」的参考风格最接近。${best.desc}`;
+  $("strength-text").textContent=getStrength(profile);
+  $("blindspot-text").textContent=getBlindspot(profile);
+  $("dimension-chart").innerHTML="";
+  profile.forEach((score,i)=>{
+    const row=document.createElement("div");row.className="dimension";
+    const name=document.createElement("span");name.textContent=DIMENSIONS[i].name;
+    const track=document.createElement("div");track.className="dim-track";
+    const fill=document.createElement("div");fill.className="dim-fill";fill.style.width=`${score}%`;track.appendChild(fill);
+    const value=document.createElement("span");value.className="dim-score";value.textContent=score;
+    row.append(name,track,value);$("dimension-chart").appendChild(row);
+  });
+  $("runnerups").innerHTML="";
+  [second,third].forEach(d=>{
+    const row=document.createElement("div");row.className="runnerup";
+    const left=document.createElement("div");
+    const name=document.createElement("strong");name.textContent=d.name;
+    const tag=document.createElement("small");tag.textContent=d.tagline;
+    left.append(name,tag);
+    const score=document.createElement("strong");score.textContent=`${d.match}%`;
+    row.append(left,score);$("runnerups").appendChild(row);
+  });
+  showPage(resultPage);
+}
+function resultText(){
+  const profile=getUserProfile();
+  const ranked=DRIVERS.map(d=>({...d,match:similarity(profile,d)})).sort((a,b)=>b.match-a.match);
+  const tags=getTags(profile);
+  return `我的赛道人格测试结果\n最匹配车手：${ranked[0].name}（风格相似度 ${ranked[0].match}%）\n车手风格：${ranked[0].tagline}\n性格标签：${tags.high.join("、")}\n六维画像：${DIMENSIONS.map((d,i)=>`${d.name} ${profile[i]}`).join("；")}\n\n${ranked[0].desc}\n\n本测试为娱乐用途，分数仅代表自设模型内的相对风格相似度，不代表官方评价或科学概率。`;
+}
+async function copyResult(){
+  const text=resultText();
+  try{
+    if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);}
+    else{
+      const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+      const ok=document.execCommand("copy");ta.remove();if(!ok)throw new Error("copy failed");
+    }
+    showToast("结果文字已复制");
+  }catch(e){window.prompt("请手动复制以下结果：",text);}
+}
+async function saveCard(){
+  // 使用 SVG + foreignObject 生成卡片图片；若浏览器不支持，则退回打印/截图指引。
+  const profile=getUserProfile();
+  const ranked=DRIVERS.map(d=>({...d,match:similarity(profile,d)})).sort((a,b)=>b.match-a.match);
+  const best=ranked[0],tags=getTags(profile);
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350"><foreignObject width="1080" height="1350"><div xmlns="http://www.w3.org/1999/xhtml" style="width:1080px;height:1350px;box-sizing:border-box;padding:80px;background:linear-gradient(145deg,#292936,#15151e);color:#f0f0f5;font-family:Arial,'Microsoft YaHei',sans-serif;"><div style="font-size:28px;letter-spacing:8px;color:#ff7773;font-weight:900;">RACE STYLE PROFILE</div><div style="margin-top:100px;font-size:30px;color:#b8b8c6;">你的赛道人格匹配车手</div><div style="font-size:100px;font-weight:900;margin-top:20px;">${escapeHtml(best.name)}</div><div style="font-size:34px;color:#d0d0da;margin-top:14px;">${escapeHtml(best.tagline)}</div><div style="margin-top:80px;border-top:3px solid #e10600;padding-top:45px;"><div style="font-size:30px;color:#ff7773;letter-spacing:4px;">STYLE SIMILARITY</div><div style="font-size:86px;font-weight:900;margin-top:10px;">${best.match}%</div><div style="font-size:30px;color:#b8b8c6;">模型内风格相似度 · 非科学概率</div></div><div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:60px;">${tags.high.map(t=>`<span style="font-size:28px;border:2px solid #703139;border-radius:40px;padding:15px 24px;color:#ffd1cf;background:#3a252b;">${escapeHtml(t)}</span>`).join("")}</div><div style="margin-top:110px;font-size:25px;line-height:1.7;color:#b8b8c6;">独立娱乐测试 · 非官方关联产品<br/>车手画像为创作者参考设定，不代表车手本人心理测评。</div><div style="position:absolute;bottom:60px;font-size:24px;letter-spacing:5px;color:#ff7773;">RACE · THINK · REPEAT</div></div></foreignObject></svg>`;
+  try{
+    const blob=new Blob([svg],{type:"image/svg+xml;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const img=new Image();
+    img.onload=()=>{
+      try{
+        const canvas=document.createElement("canvas");canvas.width=1080;canvas.height=1350;
+        const ctx=canvas.getContext("2d");ctx.drawImage(img,0,0);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(out=>{
+          if(!out){showToast("图片生成失败，请使用浏览器截图保存");return;}
+          const link=document.createElement("a");link.download="我的赛道人格结果.png";link.href=URL.createObjectURL(out);link.click();
+          setTimeout(()=>URL.revokeObjectURL(link.href),1500);showToast("结果卡已生成");
+        },"image/png");
+      }catch(e){URL.revokeObjectURL(url);showToast("当前浏览器不支持自动保存，请截图保存结果");}
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);showToast("当前浏览器不支持自动生成图片，请截图保存结果");};
+    img.src=url;
+  }catch(e){showToast("当前浏览器不支持自动保存，请截图保存结果");}
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+$("start-btn").addEventListener("click",startTest);
+$("prev-btn").addEventListener("click",previousQuestion);
+$("next-btn").addEventListener("click",nextQuestion);
+$("quit-btn").addEventListener("click",()=>{if(confirm("确定退出本次测试吗？当前答案将清空。"))showPage(startPage);});
+$("restart-btn").addEventListener("click",startTest);
+$("copy-btn").addEventListener("click",copyResult);
+$("save-btn").addEventListener("click",saveCard);
+</script>
+</body>
+</html>
